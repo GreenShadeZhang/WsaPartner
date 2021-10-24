@@ -5,18 +5,17 @@
     xmlns:local="using:WsaPartner.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    mc:Ignorable="d">
 
-    <Grid>
+    <Grid x:Name="ContentArea" Margin="60,12,60,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBox Header="应用路径：" Text="{x:Bind ViewModel.AppPath,Mode=OneWay}"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Command="{x:Bind ViewModel.SelectAppCommand}" FontSize="32" Content="选择应用"/>
-            <Button Command="{x:Bind ViewModel.InstallAppCommand}" FontSize="32" Content="安装应用"/>
+            <Button Command="{x:Bind ViewModel.SelectAppCommand}" Margin="8" CornerRadius="8" FontSize="28" Content="选择应用"/>
+            <Button Command="{x:Bind ViewModel.InstallAppCommand}" Margin="8" CornerRadius="8" FontSize="28" Content="安装应用"/>
         </StackPanel>
     </Grid>
 </Page>

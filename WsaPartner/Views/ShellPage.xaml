@@ -12,7 +12,6 @@
 
     <NavigationView
         x:Name="navigationView"
-        Background="{ThemeResource SystemControlBackgroundAltHighBrush}"
         ExpandedModeThresholdWidth="1280"
         Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}"
         IsBackButtonVisible="Visible"
@@ -53,7 +52,6 @@
             <DataTemplate>
                 <Grid>
                     <TextBlock
-                        Margin="{StaticResource SmallLeftRightMargin}"
                         Style="{ThemeResource TitleTextBlockStyle}"
                         Text="{Binding}" />
                 </Grid>
@@ -65,7 +63,6 @@
                     <DataTemplate>
                         <Grid>
                             <TextBlock
-                                Margin="{StaticResource SmallLeftRightMargin}"
                                 Style="{ThemeResource TitleTextBlockStyle}"
                                 Text="{Binding}" />
                         </Grid>

@@ -6,8 +6,7 @@
     xmlns:data="using:WsaPartner.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    mc:Ignorable="d">
 
     <Page.Resources>
         <DataTemplate x:Key="AppListViewTemplate" x:DataType="data:WsaApp">
@@ -18,7 +17,7 @@
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
-    <Grid>
+    <Grid x:Name="ContentArea" Margin="60,12,60,12">
         <ListView ItemTemplate="{StaticResource AppListViewTemplate}"
         ItemsSource="{x:Bind ViewModel.Apps}" x:Name="Apps"/>
 
