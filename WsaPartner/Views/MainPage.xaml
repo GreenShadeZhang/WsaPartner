@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="WsaPartner.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Style="{StaticResource PageStyle}">
+
+    <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Grid.Row="0"
+            x:Uid="Main_Title"
+            x:Name="Main_Text"
+            Style="{StaticResource PageTitleStyle}" />
+        <Grid
+            Grid.Row="1" 
+            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+            <!--
+                The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content.
+                Place your content here.
+            -->
+            <StackPanel>
+                <TextBlock Text="{x:Bind ViewModel.Device.Name}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Features}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Message}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Model}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Product}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Serial}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.State}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
