@@ -2,7 +2,9 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
 using SharpAdbClient;
+using System.Linq;
 using WsaPartner.Activation;
 using WsaPartner.Contracts.Services;
 using WsaPartner.Helpers;
@@ -33,8 +35,29 @@ namespace WsaPartner
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
             base.OnLaunched(args);
-            var activationService = Ioc.Default.GetService<IActivationService>();
-            await activationService.ActivateAsync(args);
+
+            Windows.ApplicationModel.Activation.IActivatedEventArgs args1 = 
+                Windows.ApplicationModel.AppInstance.GetActivatedEventArgs();
+
+            switch (args1.Kind)
+            {
+                case Windows.ApplicationModel.Activation.ActivationKind.File:
+                    var path = (args1 as Windows.ApplicationModel.Activation.IFileActivatedEventArgs).Files.First().Path;
+
+                    var  appPage = Ioc.Default.GetService<FileInstallAppPage>();
+
+                    appPage.ViewModel.AppPath = path;
+
+                    App.MainWindow.Content = appPage;
+
+                    App.MainWindow.Activate();
+                    // to do
+                    break;
+                default:
+                    var activationService = Ioc.Default.GetService<IActivationService>();
+                    await activationService.ActivateAsync(args);
+                    break;
+            }                  
         }
 
         private System.IServiceProvider ConfigureServices()
@@ -72,6 +95,8 @@ namespace WsaPartner
             services.AddTransient<InstallPage>();
             services.AddTransient<AppsViewModel>();
             services.AddTransient<AppsPage>();
+            services.AddTransient<FileInstallAppViewModel>();
+            services.AddTransient<FileInstallAppPage>();
             return services.BuildServiceProvider();
         }
     }
