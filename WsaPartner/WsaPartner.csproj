@@ -44,52 +44,65 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WsaPartner.APKViewer\WsaPartner.APKViewer.csproj" />
     <ProjectReference Include="..\WsaPartner.Core\WsaPartner.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="AdbTools\adb.exe">
+    <None Update="CMDTools\aapt.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\AdbWinApi.dll">
+    <None Update="CMDTools\adb.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\AdbWinUsbApi.dll">
+    <None Update="CMDTools\AdbWinApi.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\dmtracedump.exe">
+    <None Update="CMDTools\AdbWinUsbApi.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\etc1tool.exe">
+    <None Update="CMDTools\apksigner.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\fastboot.exe">
+    <None Update="CMDTools\bundletool-all-1.0.0.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\hprof-conv.exe">
+    <None Update="CMDTools\bundletool.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\libwinpthread-1.dll">
+    <None Update="CMDTools\dmtracedump.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\make_f2fs.exe">
+    <None Update="CMDTools\etc1tool.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\make_f2fs_casefold.exe">
+    <None Update="CMDTools\fastboot.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\mke2fs.conf">
+    <None Update="CMDTools\hprof-conv.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\mke2fs.exe">
+    <None Update="CMDTools\libwinpthread-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\NOTICE.txt">
+    <None Update="CMDTools\make_f2fs.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\source.properties">
+    <None Update="CMDTools\make_f2fs_casefold.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="AdbTools\sqlite3.exe">
+    <None Update="CMDTools\mke2fs.conf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="CMDTools\mke2fs.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="CMDTools\NOTICE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="CMDTools\source.properties">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="CMDTools\sqlite3.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Page Update="Views\FileInstallAppPage.xaml">

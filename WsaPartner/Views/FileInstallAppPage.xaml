@@ -6,13 +6,23 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
+    Style="{StaticResource PageStyle}">
+    <i:Interaction.Behaviors>
+        <ic:EventTriggerBehavior EventName="Loaded">
+            <ic:InvokeCommandAction Command="{x:Bind ViewModel.LoadedCommand}" />
+        </ic:EventTriggerBehavior>
+    </i:Interaction.Behaviors>
     <Grid>
         <StackPanel>
             <TextBlock>FIle Install App Page</TextBlock>
 
             <TextBlock Text="{x:Bind ViewModel.AppPath}"></TextBlock>
+            <!--<Image Width="400" Source="{x:Bind ViewModel.AppIcon}"></Image>-->
+            <Image Source="{x:Bind ViewModel.BitmapImage}">
+               
+            </Image>
         </StackPanel>
     </Grid>
 </Page>

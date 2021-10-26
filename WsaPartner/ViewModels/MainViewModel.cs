@@ -66,7 +66,7 @@ namespace WsaPartner.ViewModels
         {
             try
             {
-                _adbServer.StartServer($@"{AppDomain.CurrentDomain.BaseDirectory}\AdbTools\adb.exe", restartServerIfNewer: false);
+                _adbServer.StartServer($@"{AppDomain.CurrentDomain.BaseDirectory}\CMDTools\adb.exe", restartServerIfNewer: false);
 
                 _adbClient.Connect(new DnsEndPoint("127.0.0.1", 58526));
 

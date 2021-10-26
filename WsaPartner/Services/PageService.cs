@@ -23,6 +23,7 @@ namespace WsaPartner.Services
             Configure<SettingsViewModel, SettingsPage>();
             Configure<InstallViewModel, InstallPage>();
             Configure<AppsViewModel, AppsPage>();
+            Configure<FileInstallAppViewModel, FileInstallAppPage>();
         }
 
         public Type GetPageType(string key)

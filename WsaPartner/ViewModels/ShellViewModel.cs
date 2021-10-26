@@ -30,7 +30,9 @@ namespace WsaPartner.ViewModels
             set { SetProperty(ref _selected, value); }
         }
 
-        public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService)
+        public ShellViewModel(
+            INavigationService navigationService, 
+            INavigationViewService navigationViewService)
         {
             NavigationService = navigationService;
             NavigationService.Navigated += OnNavigated;
@@ -47,6 +49,7 @@ namespace WsaPartner.ViewModels
             }
 
             var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
+
             if (selectedItem != null)
             {
                 Selected = selectedItem;

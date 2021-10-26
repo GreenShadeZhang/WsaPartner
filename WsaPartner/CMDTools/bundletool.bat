@@ -1,0 +1,1 @@
+java -jar "%~dp0bundletool-all-1.0.0.jar" %*

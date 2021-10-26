@@ -11,6 +11,9 @@ using WsaPartner.Helpers;
 using WsaPartner.Services;
 using WsaPartner.ViewModels;
 using WsaPartner.Views;
+using WinRT;
+using WsaPartner.APKViewer;
+using WsaPartner.APKViewer.Decoders;
 
 // To learn more about WinUI3, see: https://docs.microsoft.com/windows/apps/winui/winui3/.
 namespace WsaPartner
@@ -36,13 +39,21 @@ namespace WsaPartner
         {
             base.OnLaunched(args);
 
-            Windows.ApplicationModel.Activation.IActivatedEventArgs args1 = 
+            IWindowNative windowNative = MainWindow.As<IWindowNative>();
+
+            var m_windowHandle = windowNative.WindowHandle;
+            // The Window object doesn't have Width and Height properties in WInUI 3 Desktop yet.
+            // To set the Width and Height, you can use the Win32 API SetWindowPos.
+            // Note, you should apply the DPI scale factor if you are thinking of dpi instead of pixels.
+            SetWindowSize(m_windowHandle, 800, 600);
+
+            Windows.ApplicationModel.Activation.IActivatedEventArgs fileArgs = 
                 Windows.ApplicationModel.AppInstance.GetActivatedEventArgs();
 
-            switch (args1.Kind)
+            switch (fileArgs.Kind)
             {
                 case Windows.ApplicationModel.Activation.ActivationKind.File:
-                    var path = (args1 as Windows.ApplicationModel.Activation.IFileActivatedEventArgs).Files.First().Path;
+                    var path = (fileArgs as Windows.ApplicationModel.Activation.IFileActivatedEventArgs).Files.First().Path;
 
                     var  appPage = Ioc.Default.GetService<FileInstallAppPage>();
 
@@ -58,6 +69,26 @@ namespace WsaPartner
                     await activationService.ActivateAsync(args);
                     break;
             }                  
+        }
+
+        private void SetWindowSize(System.IntPtr hwnd, int width, int height)
+        {
+            int dpi = PInvoke.User32.GetDpiForWindow(hwnd);
+            float scalingFactor = (float)dpi / 96;
+            width = (int)(width * scalingFactor);
+            height = (int)(height * scalingFactor);
+
+            _ = PInvoke.User32.SetWindowPos(hwnd, PInvoke.User32.SpecialWindowHandles.HWND_TOP,
+                                        0, 0, width, height,
+                                        PInvoke.User32.SetWindowPosFlags.SWP_NOMOVE);
+        }
+
+        [System.Runtime.InteropServices.ComImport]
+        [System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)]
+        [System.Runtime.InteropServices.Guid("EECDBF0E-BAE9-4CB6-A68E-9598E1CB57BB")]
+        internal interface IWindowNative
+        {
+            System.IntPtr WindowHandle { get; }
         }
 
         private System.IServiceProvider ConfigureServices()
@@ -79,6 +110,9 @@ namespace WsaPartner
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<AdbServer>();
             services.AddSingleton<AdbClient>();
+            services.AddSingleton<ICmdPathProvider, WindowsCmdPath>();
+            services.AddSingleton<IFileDecoder, DefaultAABDecoder>();
+            services.AddSingleton<IFileDecoder, DefaultAPKDecoder>();
 
             // Core Services
 
