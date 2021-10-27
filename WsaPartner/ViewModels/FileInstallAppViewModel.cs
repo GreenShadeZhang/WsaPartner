@@ -16,6 +16,8 @@ namespace WsaPartner.ViewModels
     {
         private string _appPath;
 
+        private string _iconPath;
+
         private WriteableBitmap _appIcon;
 
         private BitmapImage _bitmapImage;
@@ -36,6 +38,13 @@ namespace WsaPartner.ViewModels
             get { return _appPath; }
 
             set { SetProperty(ref _appPath, value); }
+        }
+
+        public string IconPath
+        {
+            get { return _iconPath; }
+
+            set { SetProperty(ref _iconPath, value); }
         }
 
         public WriteableBitmap AppIcon
@@ -71,6 +80,7 @@ namespace WsaPartner.ViewModels
 
                     _targetPackageData = fileDecoder.GetDataModel();
 
+                    //_iconPath = _targetPackageData.IconPath;
 
                     //var image = _targetPackageData.MaxIconContent.AsBuffer().AsStream().AsRandomAccessStream();
 
@@ -90,14 +100,14 @@ namespace WsaPartner.ViewModels
 
                     //_appIcon = output;
 
-                    var fileName = DateTime.Now.ToString("yyyyMMddhhmmss") + ".png";
+                    //var fileName = DateTime.Now.ToString("yyyyMMddhhmmss") + ".png";
 
-                    var destinationFolder = 
-                        await KnownFolders.PicturesLibrary.CreateFolderAsync("testapp",CreationCollisionOption.OpenIfExists);
+                    //var destinationFolder = 
+                    //    await KnownFolders.PicturesLibrary.CreateFolderAsync("testapp",CreationCollisionOption.OpenIfExists);
 
-                    var destinationFile = await destinationFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                    //var destinationFile = await destinationFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
 
-                    await FileIO.WriteBytesAsync(destinationFile, _targetPackageData.MaxIconContent);
+                    //await FileIO.WriteBytesAsync(destinationFile, _targetPackageData.MaxIconContent);
                 }
             }
         }

@@ -60,5 +60,44 @@ namespace WsaPartner.APKViewer.Utility
 
 			return null;
 		}
+
+		public static async Task<string> ZipExtractDataIconPath(Uri fileUri, string zipEntry)
+		{
+			if (string.IsNullOrEmpty(zipEntry))
+				return null;
+
+			Debug.WriteLine("FileUtil.ZipExtractData() entry=" + zipEntry);
+
+			using (ZipArchive za = ZipFile.Open(fileUri.OriginalString, ZipArchiveMode.Read))
+			{
+				ZipArchiveEntry iconEntry = null;
+				try
+				{
+					iconEntry = za.GetEntry(zipEntry);
+				}
+				catch (Exception)
+				{
+					//do nothing
+				}
+				Debug.WriteLine("FileUtil.ZipExtractData() zip entry get. " + iconEntry.FullName);
+
+				if (iconEntry != null)
+				{
+					string tempPath = Path.Combine(Path.GetTempPath(), "AAPToolTempImage.png");
+
+					iconEntry.ExtractToFile(tempPath, true);
+					return tempPath;
+					//using (Stream s = iconEntry.Open())
+					//using (MemoryStream ms = new MemoryStream())
+					//{
+					//	Task copyTask = s.CopyToAsync(ms);
+					//	await copyTask;
+					//	return ms.ToArray();
+					//}
+				}
+			}
+
+			return null;
+		}
 	}
 }

@@ -29,5 +29,6 @@ namespace WsaPartner.APKViewer
 
 		public string RawDumpBadging { get; set; }
 		public string RawDumpSignature { get; set; }
-	}
+        public string IconPath { get; set; }
+    }
 }

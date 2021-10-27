@@ -19,10 +19,14 @@
             <TextBlock>FIle Install App Page</TextBlock>
 
             <TextBlock Text="{x:Bind ViewModel.AppPath}"></TextBlock>
+
+            <!--<TextBlock Text="{x:Bind ViewModel.TargetPackageData.AppName}" FontSize="32"></TextBlock>-->
+                       
             <!--<Image Width="400" Source="{x:Bind ViewModel.AppIcon}"></Image>-->
-            <Image Source="{x:Bind ViewModel.BitmapImage}">
+            <!--<Image Source="{x:Bind ViewModel.IconPath}">
                
-            </Image>
+            </Image>-->
+            <Image x:Name="Icon"></Image>
         </StackPanel>
     </Grid>
 </Page>
