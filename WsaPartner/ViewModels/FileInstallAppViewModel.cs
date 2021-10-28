@@ -68,48 +68,9 @@ namespace WsaPartner.ViewModels
 
         public ICommand LoadedCommand => _loadedCommand ?? (_loadedCommand = new RelayCommand(OnLoaded));
 
-        private async void OnLoaded()
+        private void OnLoaded()
         {
-            foreach (var fileDecoder in _fileDecoders)
-            {
-                if (fileDecoder is DefaultAPKDecoder)
-                {
-                    fileDecoder.SetFilePath(new Uri(_appPath));
-
-                    await fileDecoder.Decode();
-
-                    _targetPackageData = fileDecoder.GetDataModel();
-
-                    //_iconPath = _targetPackageData.IconPath;
-
-                    //var image = _targetPackageData.MaxIconContent.AsBuffer().AsStream().AsRandomAccessStream();
-
-                    //_bitmapImage = new BitmapImage();
-
-                    //await _bitmapImage.SetSourceAsync(image);
-
-                    //// decode image
-                    //var decoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(Windows.Graphics.Imaging.BitmapDecoder.JpegDecoderId, image);
-
-                    //image.Seek(0);
-
-                    //// create bitmap
-                    //var output = new WriteableBitmap((int)decoder.PixelHeight, (int)decoder.PixelWidth);
-
-                    //await output.SetSourceAsync(image);
-
-                    //_appIcon = output;
-
-                    //var fileName = DateTime.Now.ToString("yyyyMMddhhmmss") + ".png";
-
-                    //var destinationFolder = 
-                    //    await KnownFolders.PicturesLibrary.CreateFolderAsync("testapp",CreationCollisionOption.OpenIfExists);
-
-                    //var destinationFile = await destinationFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-
-                    //await FileIO.WriteBytesAsync(destinationFile, _targetPackageData.MaxIconContent);
-                }
-            }
+         
         }
     }
 }

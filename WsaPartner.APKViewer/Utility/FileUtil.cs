@@ -61,7 +61,7 @@ namespace WsaPartner.APKViewer.Utility
 			return null;
 		}
 
-		public static async Task<string> ZipExtractDataIconPath(Uri fileUri, string zipEntry)
+		public static Task<string> ZipExtractDataIconPath(Uri fileUri, string zipEntry)
 		{
 			if (string.IsNullOrEmpty(zipEntry))
 				return null;
@@ -86,7 +86,7 @@ namespace WsaPartner.APKViewer.Utility
 					string tempPath = Path.Combine(Path.GetTempPath(), "AAPToolTempImage.png");
 
 					iconEntry.ExtractToFile(tempPath, true);
-					return tempPath;
+					return Task.FromResult(tempPath);
 					//using (Stream s = iconEntry.Open())
 					//using (MemoryStream ms = new MemoryStream())
 					//{

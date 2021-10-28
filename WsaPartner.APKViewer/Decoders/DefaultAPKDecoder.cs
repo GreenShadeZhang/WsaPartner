@@ -17,7 +17,7 @@ namespace WsaPartner.APKViewer.Decoders
 
 		private string _iconName;
 
-		private List<string> _iconPath;
+		private Dictionary<string,string> _iconPath;
 
 		public event Action decodeProgressCallbackEvent;
 
@@ -81,6 +81,7 @@ namespace WsaPartner.APKViewer.Decoders
 				Arguments = $"dump xmltree \"{targetFilePath.OriginalString}\" \"AndroidManifest.xml\""
 			};
 			Debug.WriteLine("DefaultAPKDecoder.Decode_Badging(), path=" + targetFilePath.OriginalString);
+
 			string processResult = await ProcessExecuter.ExecuteProcess(psi);
 
 			string[] arrayStr = Regex.Split(processResult, "\r\n");
@@ -100,49 +101,53 @@ namespace WsaPartner.APKViewer.Decoders
 				FileName = pathProvider.GetAAPTPath(),
 				Arguments = $"dump --values resources \"{targetFilePath.OriginalString}\""
 			};
+
 			Debug.WriteLine("DefaultAPKDecoder.Decode_Badging(), path=" + targetFilePath.OriginalString);
-			string processResult = await ProcessExecuter.ExecuteProcess(psi);
 
-			string[] arrayStr = Regex.Split(processResult, "\r\n");
+			var processResult = await ProcessExecuter.GetIconNameProcess(psi,iconKey: _iconName);
 
-			var listStr = arrayStr.ToList();
+			_iconPath = processResult;
 
-			var iconList = new List<string>();
+			//string[] arrayStr = Regex.Split(processResult, "\r\n");
 
-            if (listStr.Any())
-            {
-				var configNames = Enum.GetNames(typeof(Configs)).Reverse();
+			//var listStr = arrayStr.ToList();
 
-				const char seperator = '\"';
+			//var iconList = new List<string>();
 
-				foreach (var itemStr in listStr)
-                {
-					if(Regex.IsMatch(itemStr, $"^\\s*resource\\s{_iconName}"))
-                    {
-						var index = listStr.IndexOf(itemStr);
+   //         if (listStr.Any())
+   //         {
+			//	var configNames = Enum.GetNames(typeof(Configs)).Reverse();
 
-						 var resValue = listStr[index + 1];
+			//	const char seperator = '\"';
 
-						 var config = configNames.FirstOrDefault(c => itemStr.Contains(c));
+			//	foreach (var itemStr in listStr)
+   //             {
+			//		if(Regex.IsMatch(itemStr, $"^\\s*resource\\s{_iconName}"))
+   //                 {
+			//			var index = listStr.IndexOf(itemStr);
 
-						if (Regex.IsMatch(resValue, @"^\s*\((string\d*)\)*"))
-						{
-							// Resource value is icon url
-							var iconName = resValue.Split(seperator)
-								.FirstOrDefault(n => n.Contains("/"));
-							iconList.Add(iconName);
-							break;
-						}
-						if (Regex.IsMatch(resValue, @"^\s*\((reference)\)*"))
-						{
-							var iconID = resValue.Trim().Split(' ')[1];
-							iconList.Add(iconID);
-							break;
-						}
-					}
-                }
-            }
-			_iconPath = iconList;
+			//			 var resValue = listStr[index + 1];
+
+			//			 var config = configNames.FirstOrDefault(c => itemStr.Contains(c));
+
+			//			if (Regex.IsMatch(resValue, @"^\s*\((string\d*)\)*"))
+			//			{
+			//				// Resource value is icon url
+			//				var iconName = resValue.Split(seperator)
+			//					.FirstOrDefault(n => n.Contains("/"));
+			//				iconList.Add(iconName);
+			//				break;
+			//			}
+			//			if (Regex.IsMatch(resValue, @"^\s*\((reference)\)*"))
+			//			{
+			//				var iconID = resValue.Trim().Split(' ')[1];
+			//				iconList.Add(iconID);
+			//				break;
+			//			}
+			//		}
+   //             }
+   //         }
+			//_iconPath = iconList;
 			//dataModel.RawDumpBadging = processResult;
 			//DesktopCMDAAPTUtil.ReadBadging(dataModel, dataModel.RawDumpBadging);
 		}
@@ -154,7 +159,7 @@ namespace WsaPartner.APKViewer.Decoders
 
 		private async Task Decode_IconPath()
 		{
-			dataModel.IconPath = await FileUtil.ZipExtractDataIconPath(targetFilePath,_iconPath.FirstOrDefault());
+			dataModel.IconPath = await FileUtil.ZipExtractDataIconPath(targetFilePath, ExtractLargestIcon(_iconPath));
 		}
 
 		private async Task Decode_Signature()
@@ -190,5 +195,42 @@ namespace WsaPartner.APKViewer.Decoders
 			return dataModel;
 		}
 
+		private static string ExtractLargestIcon(Dictionary<string, string> iconList)
+		{
+			if (iconList.Count == 0)
+				return string.Empty;
+
+			var icon = string.Empty;
+
+			var configNames = Enum.GetNames(typeof(Configs)).ToList();
+
+			configNames.Sort(new ConfigComparer());
+
+			foreach (string cfg in configNames)
+			{
+				// Get the largest icon image, skip markup file (xml)
+				if (iconList.TryGetValue(cfg, out icon))
+				{
+					if (icon.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+						continue;
+					break;  // Largest icon here :)
+				}
+			}
+
+			return icon ?? string.Empty;
+		}
+
+		/// <summary>
+		/// DPI config comparer, ordered by desc (largest first)
+		/// </summary>
+		private class ConfigComparer : IComparer<string>
+		{
+			public int Compare(string x, string y)
+			{
+				Enum.TryParse<Configs>(x, out Configs ex);
+				Enum.TryParse<Configs>(y, out Configs ey);
+				return ex > ey ? -1 : 1;
+			}
+		}
 	}
 }

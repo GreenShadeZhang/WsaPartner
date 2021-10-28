@@ -57,6 +57,16 @@ namespace WsaPartner
 
                     var  appPage = Ioc.Default.GetService<FileInstallAppPage>();
 
+                    var fileDecoder = Ioc.Default.GetService<IFileDecoder>();
+
+                    fileDecoder.SetFilePath(new System.Uri(path));
+
+                    await fileDecoder.Decode();
+
+                    var targetPackageData = fileDecoder.GetDataModel();
+
+                    appPage.ViewModel.TargetPackageData = targetPackageData;
+
                     appPage.ViewModel.AppPath = path;
 
                     App.MainWindow.Content = appPage;
@@ -113,7 +123,6 @@ namespace WsaPartner
             services.AddSingleton<ICmdPathProvider, WindowsCmdPath>();
             services.AddSingleton<IFileDecoder, DefaultAABDecoder>();
             services.AddSingleton<IFileDecoder, DefaultAPKDecoder>();
-
             // Core Services
 
             // Views and ViewModels

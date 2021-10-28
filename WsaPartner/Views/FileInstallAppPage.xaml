@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:sys="using:System"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     Style="{StaticResource PageStyle}">
@@ -14,19 +15,67 @@
             <ic:InvokeCommandAction Command="{x:Bind ViewModel.LoadedCommand}" />
         </ic:EventTriggerBehavior>
     </i:Interaction.Behaviors>
-    <Grid>
-        <StackPanel>
-            <TextBlock>FIle Install App Page</TextBlock>
-
-            <TextBlock Text="{x:Bind ViewModel.AppPath}"></TextBlock>
-
-            <!--<TextBlock Text="{x:Bind ViewModel.TargetPackageData.AppName}" FontSize="32"></TextBlock>-->
-                       
-            <!--<Image Width="400" Source="{x:Bind ViewModel.AppIcon}"></Image>-->
-            <!--<Image Source="{x:Bind ViewModel.IconPath}">
-               
-            </Image>-->
-            <Image x:Name="Icon"></Image>
+    <Grid
+                Grid.Row="0"
+                Margin="24,0,24,24"
+                x:Name="MainContentContainer">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel
+                    Grid.Column="0"
+                    x:Name="TopInformation">
+            <TextBlock
+                        FontSize="24"
+                        x:Name="AppName"
+                        TextWrapping="Wrap"
+                        FontWeight="SemiLight"
+                        Text="{x:Bind ViewModel.TargetPackageData.AppName}"
+                        OpticalMarginAlignment="TrimSideBearings"
+                        ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+            <StackPanel
+                        Visibility="Collapsed"
+                        Orientation="Horizontal"
+                        x:Name="AppSignatureInfoCotainer">
+                <Image
+                            Stretch="Uniform"
+                            x:Name="AppSignatureInfoImage"/>
+                <TextBlock
+                            MaxLines="1"
+                            Margin="0,6,0,0"
+                            Text="Trusted App"
+                            x:Name="AppSignatureInfoText"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+            </StackPanel>
+            <TextBlock
+                        MaxLines="2"
+                        x:Name="AppPublisher"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
+                        Text="{x:Bind sys:String.Format('Package Name: {0}', ViewModel.TargetPackageData.PackageName), Mode=OneWay}"/>
+            <TextBlock
+                        x:Name="AppVersion"
+                        ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
+                        Text="{x:Bind sys:String.Format('Version: {0}', ViewModel.TargetPackageData.VersionString), Mode=OneWay}"/>
+            <!--<contorls:CapabilitiesInfoControl
+                        Margin="0,24,0,0"
+                        x:Name="AppCapabilities"
+                        HeadText="Capabilities: "
+                        CapabilitiesList="{x:Bind ApkInfo.Permissions, Mode=OneWay}"/>-->
         </StackPanel>
+        <Border
+                    Width="90"
+                    Height="90"
+                    Grid.Column="1"
+                    Margin="12,0,0,0"
+                    VerticalAlignment="Top"
+                    x:Name="AppIconContainer"
+                    HorizontalAlignment="Right">
+            <Image
+                        x:Name="AppIcon"
+                        Source="{x:Bind ViewModel.TargetPackageData.IconPath}"/>
+        </Border>
     </Grid>
 </Page>
