@@ -17,6 +17,7 @@
         IsBackButtonVisible="Visible"
         IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
         IsSettingsVisible="True"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
         PaneDisplayMode="Top"
         SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
         <NavigationView.MenuItems>

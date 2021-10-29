@@ -20,6 +20,8 @@ namespace WsaPartner.ViewModels
         private bool _isInstalling;
         private string _appPath;
 
+        private bool _isConnected;
+
         private PackageManager _packageManager;
 
         private readonly INavigationService _navigationService;
@@ -41,6 +43,14 @@ namespace WsaPartner.ViewModels
             get { return _device; }
 
             set { SetProperty(ref _device, value); }
+        }
+
+
+        public bool IsConnected
+        {
+            get { return _isConnected; }
+
+            set { SetProperty(ref _isConnected, value); }
         }
 
         private ICommand _gridViewItemCommand;
@@ -77,12 +87,13 @@ namespace WsaPartner.ViewModels
                 if (_device != null)
                 {
                     _packageManager = new PackageManager(_adbClient, this._device);
+                    IsConnected = true;
                     //CheckAPK();
                 }
             }
             catch (Exception ex)
             {
-
+                IsConnected = false;
             }
         }
 

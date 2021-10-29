@@ -48,12 +48,12 @@ namespace WsaPartner.ViewModels
                 return;
             }
 
-            var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
+            //var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
 
-            if (selectedItem != null)
-            {
-                Selected = selectedItem;
-            }
+            //if (selectedItem != null)
+            //{
+            //    Selected = selectedItem;
+            //}
         }
     }
 }

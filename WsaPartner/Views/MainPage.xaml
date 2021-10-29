@@ -5,19 +5,32 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:helpers="using:WsaPartner.Helpers"
+    
     Style="{StaticResource PageStyle}"
     >
-
+    <Page.Resources>
+        <helpers:BoolToEnumConverter x:Key="BoolToEnumConverter" />
+        <helpers:ContraryBoolToEnumConverter x:Key="ContraryBoolToEnumConverter" />
+    </Page.Resources>
     <Grid x:Name="ContentArea" Margin="60,12,60,12">
-        <StackPanel>
-            <TextBlock Text="ceshi"/>
-            <TextBlock Text="{x:Bind ViewModel.Device.Name}"/>
-            <TextBlock Text="{x:Bind ViewModel.Device.Features}"/>
-            <TextBlock Text="{x:Bind ViewModel.Device.Message}"/>
-            <TextBlock Text="{x:Bind ViewModel.Device.Model}"/>
-            <TextBlock Text="{x:Bind ViewModel.Device.Product}"/>
-            <TextBlock Text="{x:Bind ViewModel.Device.Serial}"/>
-            <TextBlock Text="{x:Bind ViewModel.Device.State}"/>
-        </StackPanel>
+        <Grid >
+            <StackPanel Visibility="{x:Bind ViewModel.IsConnected,Converter={StaticResource BoolToEnumConverter},Mode=OneWay}">
+                <TextBlock Text="ceshi"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Name}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Features}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Message}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Model}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Product}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.Serial}"/>
+                <TextBlock Text="{x:Bind ViewModel.Device.State}"/>
+            </StackPanel>
+        </Grid>
+        <Grid>
+            <StackPanel Visibility="{x:Bind ViewModel.IsConnected,Converter={StaticResource ContraryBoolToEnumConverter},Mode=OneWay}">
+                <TextBlock Text="ceshi"/>
+            </StackPanel>
+        </Grid>
     </Grid>
+   
 </Page>
