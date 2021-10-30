@@ -172,4 +172,34 @@
   <data name="Shell_Install.Content" xml:space="preserve">
     <value>安装应用</value>
   </data>
+  <data name="DeviceModel.Text" xml:space="preserve">
+    <value>设备模型：</value>
+  </data>
+  <data name="DeviceName.Text" xml:space="preserve">
+    <value>设备名：</value>
+  </data>
+  <data name="DeviceProduct.Text" xml:space="preserve">
+    <value>产品：</value>
+  </data>
+  <data name="DeviceSerial.Text" xml:space="preserve">
+    <value>连接信息：</value>
+  </data>
+  <data name="DeviceState.Text" xml:space="preserve">
+    <value>设备状态：</value>
+  </data>
+  <data name="DeviceHomeErrorMsg.Text" xml:space="preserve">
+    <value>初始化失败：Wsa未开启！</value>
+  </data>
+  <data name="InstallApp" xml:space="preserve">
+    <value>安装应用</value>
+  </data>
+  <data name="ReInstallApp" xml:space="preserve">
+    <value>重装应用</value>
+  </data>
+  <data name="SelectApp" xml:space="preserve">
+    <value>选择应用</value>
+  </data>
+  <data name="UpdateApp" xml:space="preserve">
+    <value>更新应用</value>
+  </data>
 </root>

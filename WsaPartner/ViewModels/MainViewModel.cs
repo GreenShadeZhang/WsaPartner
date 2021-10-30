@@ -26,6 +26,8 @@ namespace WsaPartner.ViewModels
 
         private readonly INavigationService _navigationService;
         private readonly IADBDeviceService _adbDeviceService;
+
+        private ICommand _loadedCommand;
         public MainViewModel(
             INavigationService navigationService, 
             SharpAdbClient.AdbClient adbClient, 
@@ -53,26 +55,9 @@ namespace WsaPartner.ViewModels
             set { SetProperty(ref _isConnected, value); }
         }
 
-        private ICommand _gridViewItemCommand;
+        public ICommand LoadedCommand => _loadedCommand ?? (_loadedCommand = new RelayCommand(OnLoaded));
 
-        public ICommand GridViewItemCommand
-        {
-            get
-            {
-                if (_gridViewItemCommand == null)
-                {
-                    _gridViewItemCommand = new RelayCommand<string>(
-                        async (param) =>
-                        {
-                            _navigationService.NavigateTo(typeof(InstallViewModel).FullName, param);
-                        });
-                }
-
-                return _gridViewItemCommand;
-            }
-        }
-
-        public void OnNavigatedTo(object parameter)
+        private void OnLoaded()
         {
             try
             {
@@ -82,7 +67,7 @@ namespace WsaPartner.ViewModels
 
                 //ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
 
-                _device = _adbDeviceService.CheckDevie(_adbClient);
+                Device = _adbDeviceService.CheckDevie(_adbClient);
 
                 if (_device != null)
                 {
@@ -95,6 +80,31 @@ namespace WsaPartner.ViewModels
             {
                 IsConnected = false;
             }
+        }
+
+        public void OnNavigatedTo(object parameter)
+        {
+            //try
+            //{
+            //    _adbServer.StartServer($@"{AppDomain.CurrentDomain.BaseDirectory}\CMDTools\adb.exe", restartServerIfNewer: false);
+
+            //    _adbClient.Connect(new DnsEndPoint("127.0.0.1", 58526));
+
+            //    //ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
+
+            //    _device = _adbDeviceService.CheckDevie(_adbClient);
+
+            //    if (_device != null)
+            //    {
+            //        _packageManager = new PackageManager(_adbClient, this._device);
+            //        IsConnected = true;
+            //        //CheckAPK();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    IsConnected = false;
+            //}
         }
 
         public void OnNavigatedFrom()

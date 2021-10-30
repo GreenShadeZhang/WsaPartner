@@ -35,15 +35,32 @@ namespace WsaPartner.Services
             // take into account that the splash screen is shown while this code runs.
             await InitializeAsync();
 
-            if (App.MainWindow.Content == null)
-            {
-                _shell = Ioc.Default.GetService<ShellPage>();
-                App.MainWindow.Content = _shell ?? new Frame();
-            }
+            Windows.ApplicationModel.Activation.IActivatedEventArgs fileArgs =
+                Windows.ApplicationModel.AppInstance.GetActivatedEventArgs();
 
-            // Depending on activationArgs one of ActivationHandlers or DefaultActivationHandler
-            // will navigate to the first page
-            await HandleActivationAsync(activationArgs);
+            switch (fileArgs.Kind)
+            {
+                case Windows.ApplicationModel.Activation.ActivationKind.File:
+                    var path = (fileArgs as Windows.ApplicationModel.Activation.IFileActivatedEventArgs).Files.First().Path;
+
+                    var appPage = Ioc.Default.GetService<FileInstallAppPage>();
+
+                    appPage.ViewModel.AppPath = path;
+
+                    App.MainWindow.Content = appPage;
+                    // to do
+                    break;
+                default:
+                    if (App.MainWindow.Content == null)
+                    {
+                        _shell = Ioc.Default.GetService<ShellPage>();
+                        App.MainWindow.Content = _shell ?? new Frame();
+                    }
+                    // Depending on activationArgs one of ActivationHandlers or DefaultActivationHandler
+                    // will navigate to the first page
+                    await HandleActivationAsync(activationArgs);
+                    break;
+            }         
 
             // Ensure the current window is active
             App.MainWindow.Activate();

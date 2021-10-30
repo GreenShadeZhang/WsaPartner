@@ -1,14 +1,16 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
 using SharpAdbClient;
 using SharpAdbClient.DeviceCommands;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using WsaPartner.APKViewer;
+using WsaPartner.Contracts.Services;
 using WsaPartner.Contracts.ViewModels;
 using WsaPartner.Helpers;
 
@@ -18,16 +20,49 @@ namespace WsaPartner.ViewModels
     {
         private readonly SharpAdbClient.AdbClient _adbClient;
         private readonly SharpAdbClient.AdbServer _adbServer;
+
+        private readonly IADBDeviceService _adbDeviceService;
+
         private DeviceData _device;
         private bool _isInstalling;
+
         private string _appPath;
+
         private Page _installPage;
 
+        private bool _isLoading;
+
+        private bool _isOpen;
+
         private PackageManager _packageManager;
-        public InstallViewModel(SharpAdbClient.AdbClient adbClient, SharpAdbClient.AdbServer adbServer)
+
+        private string _selectBtnText;
+
+        private string _updateOrInstallText;
+
+        private PackageDataModel _targetPackageData = new PackageDataModel();
+        public InstallViewModel(
+            SharpAdbClient.AdbClient adbClient,
+            SharpAdbClient.AdbServer adbServer,
+            IADBDeviceService deviceService)
         {
             _adbClient = adbClient;
             _adbServer = adbServer;
+            _adbDeviceService = deviceService;
+        }
+
+        public string SelectBtnText
+        {
+            get { return _selectBtnText; }
+
+            set { SetProperty(ref _selectBtnText, value); }
+        }
+
+        public string UpdateOrInstallText
+        {
+            get { return _updateOrInstallText; }
+
+            set { SetProperty(ref _updateOrInstallText, value); }
         }
 
         public void SetWindow(Page installPage)
@@ -40,12 +75,25 @@ namespace WsaPartner.ViewModels
             ADBHelper.Monitor.DeviceChanged -= OnDeviceChanged;
         }
 
-
         public bool IsInstalling
         {
             get { return _isInstalling; }
 
             set { SetProperty(ref _isInstalling, value); }
+        }
+
+        public bool IsOpen
+        {
+            get { return _isOpen; }
+
+            set { SetProperty(ref _isOpen, value); }
+        }
+
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+
+            set { SetProperty(ref _isLoading, value); }
         }
 
         public string AppPath
@@ -54,6 +102,14 @@ namespace WsaPartner.ViewModels
 
             set { SetProperty(ref _appPath, value); }
         }
+
+        public PackageDataModel TargetPackageData
+        {
+            get { return _targetPackageData; }
+
+            set { SetProperty(ref _targetPackageData, value); }
+        }
+
 
         private ICommand _selectAppCommand;
 
@@ -82,8 +138,31 @@ namespace WsaPartner.ViewModels
 
                             if (file != null)
                             {
+
                                 // Application now has read/write access to the picked file
                                 this.AppPath = file.Path;
+
+                                IsLoading = true;
+
+                                var fileDecoder = Ioc.Default.GetService<IFileDecoder>();
+
+                                fileDecoder.SetFilePath(new System.Uri(file.Path));
+
+                                await Task.Run(async () =>
+                                {
+                                    await fileDecoder.DecodeAsync();
+                                });
+
+                                var targetPackageData = fileDecoder.GetDataModel();
+
+                                TargetPackageData = targetPackageData;
+
+                                UpdateOrInstallText = _adbDeviceService
+                                    .VersionComparison(_packageManager, targetPackageData.PackageName, targetPackageData.VersionCode);
+
+                                IsLoading = false;
+
+                                IsOpen = true;
                             }
                             else
                             {
@@ -107,7 +186,10 @@ namespace WsaPartner.ViewModels
                     _installAppCommand = new RelayCommand(
                         async () =>
                         {
-                            _packageManager.InstallPackage(AppPath, true);
+                            await Task.Run(() =>
+                            {
+                                _packageManager.InstallPackage(AppPath, true);
+                            });
                         });
                 }
 
@@ -118,17 +200,22 @@ namespace WsaPartner.ViewModels
 
         public async void OnNavigatedTo(object parameter)
         {
+            SelectBtnText = "SelectApp".GetLocalized();
+
             await Task.Run(() =>
             {
                 try
                 {
-                    _adbServer.StartServer($@"{AppDomain.CurrentDomain.BaseDirectory}\CMDTools\adb.exe", restartServerIfNewer: false);
-                    _adbClient.Connect(new DnsEndPoint("127.0.0.1", 58526));
-                    ADBHelper.Monitor.DeviceChanged += OnDeviceChanged;
-                    if (CheckDevice() && _device != null)
+                    var ret = _adbServer.GetStatus();
+
+                    if (ret.IsRunning == true)
                     {
-                        _packageManager = new PackageManager(_adbClient, this._device);
-                        //CheckAPK();
+                        var device = _adbDeviceService.CheckDevie(_adbClient);
+
+                        if (device != null)
+                        {
+                            _packageManager = new PackageManager(_adbClient, this._device);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -143,33 +230,7 @@ namespace WsaPartner.ViewModels
         {
             if (!IsInstalling)
             {
-                //DispatcherQueue.TryEnqueue(() =>
-                //{
-                //    _adbClient.Connect(new DnsEndPoint("127.0.0.1", 58526));
-                //    if (CheckDevice() && _device != null)
-                //    {
-                //        var manager = new PackageManager(_adbClient, this._device);
-                //        //CheckAPK();
-                //    }
-                //});
             }
-        }
-
-        private bool CheckDevice()
-        {
-            IList<DeviceData> devices = _adbClient.GetDevices();
-
-            if (devices.Count <= 0) { return false; }
-
-            foreach (DeviceData device in devices)
-            {
-                if (device.Model.Contains("Subsystem_for_Android_TM_"))
-                {
-                    this._device = device ?? this._device;
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

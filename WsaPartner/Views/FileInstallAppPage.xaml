@@ -9,63 +9,78 @@
     xmlns:sys="using:System"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:helpers="using:WsaPartner.Helpers"
     Style="{StaticResource PageStyle}">
     <i:Interaction.Behaviors>
         <ic:EventTriggerBehavior EventName="Loaded">
             <ic:InvokeCommandAction Command="{x:Bind ViewModel.LoadedCommand}" />
         </ic:EventTriggerBehavior>
     </i:Interaction.Behaviors>
-    <Grid
-                Grid.Row="0"
-                Margin="24,0,24,24"
+    <Page.Resources>
+        <helpers:BoolToEnumConverter x:Key="BoolToEnumConverter" />
+        <helpers:ContraryBoolToEnumConverter x:Key="ContraryBoolToEnumConverter" />
+    </Page.Resources>
+    <Grid x:Name="ContentArea" Margin="60,12,60,12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button 
+                Command="{x:Bind ViewModel.InstallAppCommand}" 
+                Margin="0,8,0,8" 
+                CornerRadius="8" 
+                FontSize="24" 
+                Content="{x:Bind ViewModel.UpdateOrInstallText,Mode=OneWay}" 
+                Visibility="{x:Bind ViewModel.IsOpen,Converter={StaticResource BoolToEnumConverter},Mode=OneWay}"/>
+        </StackPanel>
+        <Grid
+               Visibility="{x:Bind ViewModel.IsOpen,Converter={StaticResource BoolToEnumConverter},Mode=OneWay}"
+                Grid.Row="1"
+                Margin="0,24,24,0"
                 x:Name="MainContentContainer">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel
                     Grid.Column="0"
                     x:Name="TopInformation">
-            <TextBlock
+                <TextBlock
                         FontSize="24"
                         x:Name="AppName"
                         TextWrapping="Wrap"
                         FontWeight="SemiLight"
-                        Text="{x:Bind ViewModel.TargetPackageData.AppName}"
+                        Text="{x:Bind ViewModel.TargetPackageData.AppName,Mode=OneWay}"
                         OpticalMarginAlignment="TrimSideBearings"
                         ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
-            <StackPanel
+                <StackPanel
                         Visibility="Collapsed"
                         Orientation="Horizontal"
                         x:Name="AppSignatureInfoCotainer">
-                <Image
+                    <Image
                             Stretch="Uniform"
                             x:Name="AppSignatureInfoImage"/>
-                <TextBlock
+                    <TextBlock
                             MaxLines="1"
                             Margin="0,6,0,0"
                             Text="Trusted App"
                             x:Name="AppSignatureInfoText"
                             TextTrimming="CharacterEllipsis"
                             ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
-            </StackPanel>
-            <TextBlock
+                </StackPanel>
+                <TextBlock
                         MaxLines="2"
                         x:Name="AppPublisher"
                         TextTrimming="CharacterEllipsis"
                         ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
                         Text="{x:Bind sys:String.Format('Package Name: {0}', ViewModel.TargetPackageData.PackageName), Mode=OneWay}"/>
-            <TextBlock
+                <TextBlock
                         x:Name="AppVersion"
                         ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
                         Text="{x:Bind sys:String.Format('Version: {0}', ViewModel.TargetPackageData.VersionString), Mode=OneWay}"/>
-            <!--<contorls:CapabilitiesInfoControl
-                        Margin="0,24,0,0"
-                        x:Name="AppCapabilities"
-                        HeadText="Capabilities: "
-                        CapabilitiesList="{x:Bind ApkInfo.Permissions, Mode=OneWay}"/>-->
-        </StackPanel>
-        <Border
+            </StackPanel>
+            <Border
                     Width="90"
                     Height="90"
                     Grid.Column="1"
@@ -73,9 +88,11 @@
                     VerticalAlignment="Top"
                     x:Name="AppIconContainer"
                     HorizontalAlignment="Right">
-            <Image
+                <Image
                         x:Name="AppIcon"
-                        Source="{x:Bind ViewModel.TargetPackageData.IconPath}"/>
-        </Border>
+                        Source="{x:Bind ViewModel.TargetPackageData.IconPath,Mode=OneWay}"/>
+            </Border>
+        </Grid>
+        <ProgressRing x:Name="LoadingRing" Width="100" Height="100" Grid.RowSpan="2" IsActive="{x:Bind ViewModel.IsLoading,Mode=OneWay}" />
     </Grid>
 </Page>

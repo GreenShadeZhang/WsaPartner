@@ -10,7 +10,7 @@ namespace WsaPartner.APKViewer
 		event Action decodeProgressCallbackEvent;
 
 		void SetFilePath(Uri fileUri);
-		Task Decode();
+		Task DecodeAsync();
 
 		PackageDataModel GetDataModel();
 	}

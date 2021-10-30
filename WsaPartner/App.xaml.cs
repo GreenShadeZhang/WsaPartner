@@ -47,38 +47,41 @@ namespace WsaPartner
             // Note, you should apply the DPI scale factor if you are thinking of dpi instead of pixels.
             SetWindowSize(m_windowHandle, 800, 600);
 
-            Windows.ApplicationModel.Activation.IActivatedEventArgs fileArgs = 
-                Windows.ApplicationModel.AppInstance.GetActivatedEventArgs();
+            var activationService = Ioc.Default.GetService<IActivationService>();
+            await activationService.ActivateAsync(args);
 
-            switch (fileArgs.Kind)
-            {
-                case Windows.ApplicationModel.Activation.ActivationKind.File:
-                    var path = (fileArgs as Windows.ApplicationModel.Activation.IFileActivatedEventArgs).Files.First().Path;
+            //Windows.ApplicationModel.Activation.IActivatedEventArgs fileArgs = 
+            //    Windows.ApplicationModel.AppInstance.GetActivatedEventArgs();
 
-                    var  appPage = Ioc.Default.GetService<FileInstallAppPage>();
+            //switch (fileArgs.Kind)
+            //{
+            //    case Windows.ApplicationModel.Activation.ActivationKind.File:
+            //        var path = (fileArgs as Windows.ApplicationModel.Activation.IFileActivatedEventArgs).Files.First().Path;
 
-                    var fileDecoder = Ioc.Default.GetService<IFileDecoder>();
+            //        var  appPage = Ioc.Default.GetService<FileInstallAppPage>();
 
-                    fileDecoder.SetFilePath(new System.Uri(path));
+            //        //var fileDecoder = Ioc.Default.GetService<IFileDecoder>();
 
-                    await fileDecoder.Decode();
+            //        //fileDecoder.SetFilePath(new System.Uri(path));
 
-                    var targetPackageData = fileDecoder.GetDataModel();
+            //        //await fileDecoder.DecodeAsync();
 
-                    appPage.ViewModel.TargetPackageData = targetPackageData;
+            //        //var targetPackageData = fileDecoder.GetDataModel();
 
-                    appPage.ViewModel.AppPath = path;
+            //        //appPage.ViewModel.TargetPackageData = targetPackageData;
 
-                    App.MainWindow.Content = appPage;
+            //        appPage.ViewModel.AppPath = path;
 
-                    App.MainWindow.Activate();
-                    // to do
-                    break;
-                default:
-                    var activationService = Ioc.Default.GetService<IActivationService>();
-                    await activationService.ActivateAsync(args);
-                    break;
-            }                  
+            //        App.MainWindow.Content = appPage;
+
+            //        App.MainWindow.Activate();
+            //        // to do
+            //        break;
+            //    default:
+            //        var activationService = Ioc.Default.GetService<IActivationService>();
+            //        await activationService.ActivateAsync(args);
+            //        break;
+            //}                  
         }
 
         private void SetWindowSize(System.IntPtr hwnd, int width, int height)

@@ -25,7 +25,7 @@ namespace WsaPartner.APKViewer.Decoders
 			targetFilePath = fileUri;
 		}
 
-		public async Task Decode()
+		public async Task DecodeAsync()
 		{
 			Debug.WriteLine("DefaultAABDecoder.Decode() decode start.");
 			dataModel = new PackageDataModel();

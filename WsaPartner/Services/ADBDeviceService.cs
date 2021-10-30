@@ -1,10 +1,12 @@
 ﻿using SharpAdbClient;
+using SharpAdbClient.DeviceCommands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WsaPartner.Contracts.Services;
+using WsaPartner.Helpers;
 
 namespace WsaPartner.Services
 {
@@ -24,6 +26,24 @@ namespace WsaPartner.Services
                 }
             }
             return null;
+        }
+
+        public string VersionComparison(PackageManager packageManager, string packageName, string targetVersionCode)
+        {
+            var vInfo = packageManager.GetVersionInfo(packageName);
+
+            if (vInfo == null)
+            {
+                return "InstallApp".GetLocalized();
+            }
+            else if (vInfo.VersionCode < int.Parse(targetVersionCode))
+            {
+                return "UpdateApp".GetLocalized();
+            }
+            else
+            {
+                return "ReInstallApp".GetLocalized();
+            }
         }
     }
 }

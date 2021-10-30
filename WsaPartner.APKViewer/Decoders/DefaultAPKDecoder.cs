@@ -32,7 +32,7 @@ namespace WsaPartner.APKViewer.Decoders
 			targetFilePath = fileUri;
 		}
 
-		public async Task Decode()
+		public async Task DecodeAsync()
 		{
 			Debug.WriteLine("DefaultAPKDecoder.Decode() decode start.");
 			dataModel = new PackageDataModel();
