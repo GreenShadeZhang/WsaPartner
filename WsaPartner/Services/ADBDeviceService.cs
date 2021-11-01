@@ -1,10 +1,6 @@
 ﻿using SharpAdbClient;
 using SharpAdbClient.DeviceCommands;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WsaPartner.Contracts.Services;
 using WsaPartner.Helpers;
 
@@ -14,18 +10,22 @@ namespace WsaPartner.Services
     {
         public DeviceData CheckDevie(AdbClient adbClient)
         {
+            DeviceData deviceData = null;
+
             IList<DeviceData> devices = adbClient.GetDevices();
 
-            if (devices.Count <= 0) { return null; }
-
-            foreach (DeviceData device in devices)
+            if (devices != null && devices.Count > 0)
             {
-                if (device.Model.Contains("Subsystem_for_Android_TM_"))
+                foreach (DeviceData device in devices)
                 {
-                    return device;
+                    if (device.Model.Contains("Subsystem_for_Android_TM_"))
+                    {
+                        deviceData = device;
+                    }
                 }
             }
-            return null;
+
+            return deviceData;
         }
 
         public string VersionComparison(PackageManager packageManager, string packageName, string targetVersionCode)

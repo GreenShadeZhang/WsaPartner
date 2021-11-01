@@ -1,30 +1,21 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml.Controls;
 using SharpAdbClient;
 using SharpAdbClient.DeviceCommands;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using WsaPartner.Contracts.Services;
 using WsaPartner.Contracts.ViewModels;
 using WsaPartner.Core.Models;
-using WsaPartner.Helpers;
 
 namespace WsaPartner.ViewModels
 {
     public class AppsViewModel : ObservableRecipient, INavigationAware
     {
-        private readonly SharpAdbClient.AdbClient _adbClient;
-        private readonly SharpAdbClient.AdbServer _adbServer;
+        private readonly AdbClient _adbClient;
+        private readonly AdbServer _adbServer;
         private DeviceData _device;
         private bool _isInstalling;
-        private string _appPath;
-        private Page _installPage;
         private readonly IADBDeviceService _adbDeviceService;
 
         private Dictionary<string, string> _packages;
@@ -33,8 +24,9 @@ namespace WsaPartner.ViewModels
 
         private PackageManager _packageManager;
         public AppsViewModel(
-            SharpAdbClient.AdbClient adbClient, 
-            SharpAdbClient.AdbServer adbServer, IADBDeviceService deviceService)
+            AdbClient adbClient,
+            AdbServer adbServer,
+            IADBDeviceService deviceService)
         {
             _adbClient = adbClient;
             _adbServer = adbServer;
@@ -43,7 +35,6 @@ namespace WsaPartner.ViewModels
 
         public void OnNavigatedFrom()
         {
-            ADBHelper.Monitor.DeviceChanged -= OnDeviceChanged;
         }
 
 
@@ -81,11 +72,10 @@ namespace WsaPartner.ViewModels
                 {
                     _packageManager = new PackageManager(_adbClient, this._device);
 
-                    if(_packageManager != null)
+                    if (_packageManager != null)
                     {
-                        _packages = _packageManager.Packages;                       
+                        _packages = _packageManager.Packages;
                     }
-                    //CheckAPK();
                 }
 
                 if (_packages != null && _packages.Count > 0)
@@ -111,22 +101,6 @@ namespace WsaPartner.ViewModels
             catch (Exception ex)
             {
 
-            }
-        }
-
-        private void OnDeviceChanged(object sender, SharpAdbClient.DeviceDataEventArgs e)
-        {
-            if (!IsInstalling)
-            {
-                //DispatcherQueue.TryEnqueue(() =>
-                //{
-                //    _adbClient.Connect(new DnsEndPoint("127.0.0.1", 58526));
-                //    if (CheckDevice() && _device != null)
-                //    {
-                //        var manager = new PackageManager(_adbClient, this._device);
-                //        //CheckAPK();
-                //    }
-                //});
             }
         }
     }

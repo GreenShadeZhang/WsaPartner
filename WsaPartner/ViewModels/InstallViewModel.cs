@@ -6,29 +6,26 @@ using Microsoft.UI.Xaml.Controls;
 using SharpAdbClient;
 using SharpAdbClient.DeviceCommands;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using WsaPartner.APKViewer;
 using WsaPartner.Contracts.Services;
 using WsaPartner.Contracts.ViewModels;
 using WsaPartner.Helpers;
+using WsaPartner.Views;
 
 namespace WsaPartner.ViewModels
 {
     public class InstallViewModel : ObservableRecipient, INavigationAware
     {
-        private readonly SharpAdbClient.AdbClient _adbClient;
-        private readonly SharpAdbClient.AdbServer _adbServer;
+        private readonly AdbClient _adbClient;
+        private readonly AdbServer _adbServer;
 
         private readonly IADBDeviceService _adbDeviceService;
 
-        private DeviceData _device;
         private bool _isInstalling;
 
         private string _appPath;
-
-        private Page _installPage;
 
         private bool _isLoading;
 
@@ -41,14 +38,21 @@ namespace WsaPartner.ViewModels
         private string _updateOrInstallText;
 
         private PackageDataModel _targetPackageData = new PackageDataModel();
+
+        private Page _page;
         public InstallViewModel(
-            SharpAdbClient.AdbClient adbClient,
-            SharpAdbClient.AdbServer adbServer,
+            AdbClient adbClient,
+            AdbServer adbServer,
             IADBDeviceService deviceService)
         {
             _adbClient = adbClient;
             _adbServer = adbServer;
             _adbDeviceService = deviceService;
+        }
+
+        public void SetPage(Page page)
+        {
+            _page = page;
         }
 
         public string SelectBtnText
@@ -65,14 +69,8 @@ namespace WsaPartner.ViewModels
             set { SetProperty(ref _updateOrInstallText, value); }
         }
 
-        public void SetWindow(Page installPage)
-        {
-            _installPage = installPage;
-        }
-
         public void OnNavigatedFrom()
         {
-            ADBHelper.Monitor.DeviceChanged -= OnDeviceChanged;
         }
 
         public bool IsInstalling
@@ -138,7 +136,6 @@ namespace WsaPartner.ViewModels
 
                             if (file != null)
                             {
-
                                 // Application now has read/write access to the picked file
                                 this.AppPath = file.Path;
 
@@ -186,10 +183,29 @@ namespace WsaPartner.ViewModels
                     _installAppCommand = new RelayCommand(
                         async () =>
                         {
-                            await Task.Run(() =>
+                            var noWifiDialog = new ContentDialog
                             {
-                                _packageManager.InstallPackage(AppPath, true);
-                            });
+                                Title = "install apk",
+                                Content = "是否安装？",
+                                CloseButtonText = "Cancel",
+                                PrimaryButtonText = "OK"
+                            };
+
+                            noWifiDialog.XamlRoot = _page.XamlRoot;
+
+                            ContentDialogResult result = await noWifiDialog.ShowAsync();
+
+                            if(result == ContentDialogResult.Primary)
+                            {
+                                IsLoading = true;
+
+                                await Task.Run(() =>
+                                {
+                                    _packageManager.InstallPackage(AppPath, true);
+                                });
+
+                                IsLoading = false;
+                            }                 
                         });
                 }
 
@@ -214,7 +230,7 @@ namespace WsaPartner.ViewModels
 
                         if (device != null)
                         {
-                            _packageManager = new PackageManager(_adbClient, this._device);
+                            _packageManager = new PackageManager(_adbClient, device);
                         }
                     }
                 }
@@ -224,13 +240,6 @@ namespace WsaPartner.ViewModels
                 }
 
             });
-        }
-
-        private void OnDeviceChanged(object sender, SharpAdbClient.DeviceDataEventArgs e)
-        {
-            if (!IsInstalling)
-            {
-            }
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using System;
 using System.Threading.Tasks;
-
-using Microsoft.UI.Xaml;
-
 using WsaPartner.Contracts.Services;
 using WsaPartner.ViewModels;
 

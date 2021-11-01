@@ -3,13 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+    xmlns:helpers="using:WsaPartner.Helpers"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:helpers="using:WsaPartner.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Style="{StaticResource PageStyle}"
-    >
+    mc:Ignorable="d">
     <i:Interaction.Behaviors>
         <ic:EventTriggerBehavior EventName="Loaded">
             <ic:InvokeCommandAction Command="{x:Bind ViewModel.LoadedCommand}" />
@@ -20,40 +19,73 @@
         <helpers:ContraryBoolToEnumConverter x:Key="ContraryBoolToEnumConverter" />
     </Page.Resources>
     <Grid x:Name="ContentArea" Margin="60,12,60,12">
-        <Grid Visibility="{x:Bind ViewModel.IsConnected,Converter={StaticResource BoolToEnumConverter},Mode=OneWay}">
+        <Grid Visibility="{x:Bind ViewModel.IsConnected, Converter={StaticResource BoolToEnumConverter}, Mode=OneWay}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Margin="0,12,0,12" Orientation="Horizontal">
-                <TextBlock x:Uid="DeviceName" FontSize="24"/>
-                <TextBlock Text="{x:Bind ViewModel.Device.Name,Mode=OneWay}" FontSize="24" TextWrapping="WrapWholeWords"/>
+            <StackPanel
+                Grid.Row="0"
+                Margin="0,12,0,12"
+                Orientation="Horizontal">
+                <TextBlock x:Uid="DeviceName" FontSize="24" />
+                <TextBlock
+                    FontSize="24"
+                    Text="{x:Bind ViewModel.Device.Name, Mode=OneWay}"
+                    TextWrapping="WrapWholeWords" />
             </StackPanel>
-            <StackPanel Grid.Row="1" Margin="0,12,0,12" Orientation="Horizontal">
-                <TextBlock x:Uid="DeviceModel" FontSize="24"/>
-                <TextBlock Text="{x:Bind ViewModel.Device.Model,Mode=OneWay}" FontSize="24" TextWrapping="WrapWholeWords"/>
+            <StackPanel
+                Grid.Row="1"
+                Margin="0,12,0,12"
+                Orientation="Horizontal">
+                <TextBlock x:Uid="DeviceModel" FontSize="24" />
+                <TextBlock
+                    FontSize="24"
+                    Text="{x:Bind ViewModel.Device.Model, Mode=OneWay}"
+                    TextWrapping="WrapWholeWords" />
             </StackPanel>
-            <StackPanel Grid.Row="2" Margin="0,12,0,12" Orientation="Horizontal">
-                <TextBlock x:Uid="DeviceProduct" FontSize="24"/>
-                <TextBlock Text="{x:Bind ViewModel.Device.Product,Mode=OneWay}" FontSize="24" TextWrapping="WrapWholeWords"/>
+            <StackPanel
+                Grid.Row="2"
+                Margin="0,12,0,12"
+                Orientation="Horizontal">
+                <TextBlock x:Uid="DeviceProduct" FontSize="24" />
+                <TextBlock
+                    FontSize="24"
+                    Text="{x:Bind ViewModel.Device.Product, Mode=OneWay}"
+                    TextWrapping="WrapWholeWords" />
             </StackPanel>
-            <StackPanel Grid.Row="3" Margin="0,12,0,12" Orientation="Horizontal">
-                <TextBlock x:Uid="DeviceSerial" FontSize="24"/>
-                <TextBlock Text="{x:Bind ViewModel.Device.Serial,Mode=OneWay}" FontSize="24" TextWrapping="WrapWholeWords"/>
+            <StackPanel
+                Grid.Row="3"
+                Margin="0,12,0,12"
+                Orientation="Horizontal">
+                <TextBlock x:Uid="DeviceSerial" FontSize="24" />
+                <TextBlock
+                    FontSize="24"
+                    Text="{x:Bind ViewModel.Device.Serial, Mode=OneWay}"
+                    TextWrapping="WrapWholeWords" />
             </StackPanel>
-            <StackPanel Grid.Row="4" Margin="0,12,0,12" Orientation="Horizontal">
-                <TextBlock x:Uid="DeviceState" FontSize="24"/>
-                <TextBlock Text="{x:Bind ViewModel.Device.State,Mode=OneWay}" FontSize="24" TextWrapping="WrapWholeWords"/>
+            <StackPanel
+                Grid.Row="4"
+                Margin="0,12,0,12"
+                Orientation="Horizontal">
+                <TextBlock x:Uid="DeviceState" FontSize="24" />
+                <TextBlock
+                    FontSize="24"
+                    Text="{x:Bind ViewModel.Device.State, Mode=OneWay}"
+                    TextWrapping="WrapWholeWords" />
             </StackPanel>
         </Grid>
-        <Grid Visibility="{x:Bind ViewModel.IsConnected,Converter={StaticResource ContraryBoolToEnumConverter},Mode=OneWay}">
+        <Grid Visibility="{x:Bind ViewModel.IsConnected, Converter={StaticResource ContraryBoolToEnumConverter}, Mode=OneWay}">
             <StackPanel Margin="0,12,0,12">
-                <TextBlock Foreground="Red" x:Uid="DeviceHomeErrorMsg" FontSize="24"/>
+                <TextBlock
+                    x:Uid="DeviceHomeErrorMsg"
+                    FontSize="24"
+                    Foreground="Red" />
             </StackPanel>
         </Grid>
     </Grid>
-   
+
 </Page>

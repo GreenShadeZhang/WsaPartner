@@ -30,6 +30,9 @@ namespace WsaPartner.Views
         public FileInstallAppPage()
         {
             ViewModel = Ioc.Default.GetService<FileInstallAppViewModel>();
+
+            ViewModel.SetPage(this);
+
             InitializeComponent();
         }
     }

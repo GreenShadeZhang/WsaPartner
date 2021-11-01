@@ -29,7 +29,9 @@ namespace WsaPartner.Views
         public InstallPage()
         {
             ViewModel = Ioc.Default.GetService<InstallViewModel>();
-            ViewModel.SetWindow(this);
+
+            ViewModel.SetPage(this);
+
             this.InitializeComponent();
         }
     }

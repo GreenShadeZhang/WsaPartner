@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using WsaPartner.APKViewer;
 using WsaPartner.Contracts.Services;
+using SharpAdbClient;
+using Microsoft.UI.Xaml.Controls;
+using System;
+using WsaPartner.Views;
 
 namespace WsaPartner.ViewModels
 {
@@ -16,10 +20,6 @@ namespace WsaPartner.ViewModels
         private string _appPath;
 
         private string _iconPath;
-
-        private WriteableBitmap _appIcon;
-
-        private BitmapImage _bitmapImage;
 
         private readonly IEnumerable<IFileDecoder> _fileDecoders;
 
@@ -31,8 +31,8 @@ namespace WsaPartner.ViewModels
 
         private bool _isOpen;
 
-        private readonly SharpAdbClient.AdbClient _adbClient;
-        private readonly SharpAdbClient.AdbServer _adbServer;
+        private readonly AdbClient _adbClient;
+        private readonly AdbServer _adbServer;
 
         private PackageManager _packageManager;
 
@@ -41,10 +41,12 @@ namespace WsaPartner.ViewModels
         private ICommand _installAppCommand;
 
         private string _updateOrInstallText;
+
+        private Page _page;
         public FileInstallAppViewModel(
             IEnumerable<IFileDecoder> decoders,
-            SharpAdbClient.AdbClient adbClient, 
-            SharpAdbClient.AdbServer adbServer,
+            AdbClient adbClient,
+            AdbServer adbServer,
             IADBDeviceService deviceService)
         {
             _fileDecoders = decoders;
@@ -53,6 +55,10 @@ namespace WsaPartner.ViewModels
             _adbDeviceService = deviceService;
         }
 
+        public void SetPage(Page page)
+        {
+            _page = page;
+        }
         public string UpdateOrInstallText
         {
             get { return _updateOrInstallText; }
@@ -69,10 +75,29 @@ namespace WsaPartner.ViewModels
                     _installAppCommand = new RelayCommand(
                         async () =>
                         {
-                            await Task.Run(() =>
+                            var noWifiDialog = new ContentDialog
                             {
-                                _packageManager.InstallPackage(AppPath, true);
-                            });
+                                Title = "install apk",
+                                Content = "是否安装？",
+                                CloseButtonText = "Cancel",
+                                PrimaryButtonText = "OK"
+                            };
+
+                            noWifiDialog.XamlRoot = _page.XamlRoot;
+
+                            ContentDialogResult result = await noWifiDialog.ShowAsync();
+
+                            if (result == ContentDialogResult.Primary)
+                            {
+                                IsLoading = true;
+
+                                await Task.Run(() =>
+                                {
+                                    _packageManager.InstallPackage(AppPath, true);
+                                });
+
+                                IsLoading = false;
+                            }
                         });
                 }
 
@@ -107,19 +132,7 @@ namespace WsaPartner.ViewModels
 
             set { SetProperty(ref _iconPath, value); }
         }
-
-        public WriteableBitmap AppIcon
-        {
-            get { return _appIcon; }
-            set { SetProperty(ref _appIcon, value); }
-        }
-
-        public BitmapImage BitmapImage
-        {
-            get { return _bitmapImage; }
-            set { SetProperty(ref _bitmapImage, value); }
-        }
-
+        
         public PackageDataModel TargetPackageData
         {
             get { return _targetPackageData; }

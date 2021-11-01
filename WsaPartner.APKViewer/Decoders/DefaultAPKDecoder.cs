@@ -9,228 +9,183 @@ using WsaPartner.APKViewer.Utility;
 
 namespace WsaPartner.APKViewer.Decoders
 {
-	public class DefaultAPKDecoder: IFileDecoder
-	{
-		private ICmdPathProvider pathProvider;
-		private Uri targetFilePath;
-		private PackageDataModel dataModel;
+    public class DefaultAPKDecoder : IFileDecoder
+    {
+        private ICmdPathProvider pathProvider;
+        private Uri targetFilePath;
+        private PackageDataModel dataModel;
 
-		private string _iconName;
+        private string _iconName;
 
-		private Dictionary<string,string> _iconPath;
+        private Dictionary<string, string> _iconPath;
 
-		public event Action decodeProgressCallbackEvent;
+        public event Action decodeProgressCallbackEvent;
 
-		public DefaultAPKDecoder(ICmdPathProvider newPathProvider)
-		{
-			dataModel = null;
-			pathProvider = newPathProvider;
-		}
+        public DefaultAPKDecoder(ICmdPathProvider newPathProvider)
+        {
+            dataModel = null;
+            pathProvider = newPathProvider;
+        }
 
-		public void SetFilePath(Uri fileUri)
-		{
-			targetFilePath = fileUri;
-		}
+        public void SetFilePath(Uri fileUri)
+        {
+            targetFilePath = fileUri;
+        }
 
-		public async Task DecodeAsync()
-		{
-			Debug.WriteLine("DefaultAPKDecoder.Decode() decode start.");
-			dataModel = new PackageDataModel();
+        public async Task DecodeAsync()
+        {
+            Debug.WriteLine("DefaultAPKDecoder.Decode() decode start.");
+            dataModel = new PackageDataModel();
 
-			Debug.WriteLine("DefaultAPKDecoder.Decode() Decode_Badging start.");
-			await Decode_Badging();
-			decodeProgressCallbackEvent?.Invoke();
-			Debug.WriteLine("DefaultAPKDecoder.Decode() Decode_Icon start.");
-			
-			await Decode_LargeIcon();
+            Debug.WriteLine("DefaultAPKDecoder.Decode() Decode_Badging start.");
+            await Decode_Badging();
+            decodeProgressCallbackEvent?.Invoke();
+            Debug.WriteLine("DefaultAPKDecoder.Decode() Decode_Icon start.");
 
-			await Decode_LargeIconName();
+            await Decode_LargeIcon();
 
-			await Decode_IconPath();
-			//await Decode_Icon();
-			decodeProgressCallbackEvent?.Invoke();
-			Debug.WriteLine("DefaultAPKDecoder.Decode() Decode_Signature start.");
-			await Decode_Signature();
-			decodeProgressCallbackEvent?.Invoke();
-			Debug.WriteLine("DefaultAPKDecoder.Decode() Decode_Hash start.");
-			Decode_Hash();
+            await Decode_LargeIconName();
 
-			Debug.WriteLine("DefaultAPKDecoder.Decode() decode finish.");
-			decodeProgressCallbackEvent?.Invoke();
-		}
+            await Decode_IconPath();
+            
+            decodeProgressCallbackEvent?.Invoke();
+            Debug.WriteLine("DefaultAPKDecoder.Decode() Decode_Signature start.");
+            await Decode_Signature();
+            decodeProgressCallbackEvent?.Invoke();
+            Debug.WriteLine("DefaultAPKDecoder.Decode() Decode_Hash start.");
+            Decode_Hash();
 
-		private async Task Decode_Badging()
-		{
-			ProcessStartInfo psi = new ProcessStartInfo()
-			{
-				FileName = pathProvider.GetAAPTPath(),
-				Arguments = " d badging \"" + targetFilePath.OriginalString + "\""
-			};
-			Debug.WriteLine("DefaultAPKDecoder.Decode_Badging(), path=" + targetFilePath.OriginalString);
-			string processResult = await ProcessExecuter.ExecuteProcess(psi);
+            Debug.WriteLine("DefaultAPKDecoder.Decode() decode finish.");
+            decodeProgressCallbackEvent?.Invoke();
+        }
 
-			dataModel.RawDumpBadging = processResult;
-			DesktopCMDAAPTUtil.ReadBadging(dataModel, dataModel.RawDumpBadging);
-		}
+        private async Task Decode_Badging()
+        {
+            ProcessStartInfo psi = new ProcessStartInfo()
+            {
+                FileName = pathProvider.GetAAPTPath(),
+                Arguments = " d badging \"" + targetFilePath.OriginalString + "\""
+            };
+            Debug.WriteLine("DefaultAPKDecoder.Decode_Badging(), path=" + targetFilePath.OriginalString);
 
-		private async Task Decode_LargeIcon()
-		{
-			ProcessStartInfo psi = new ProcessStartInfo()
-			{
-				FileName = pathProvider.GetAAPTPath(),
-				Arguments = $"dump xmltree \"{targetFilePath.OriginalString}\" \"AndroidManifest.xml\""
-			};
-			Debug.WriteLine("DefaultAPKDecoder.Decode_Badging(), path=" + targetFilePath.OriginalString);
+            string processResult = await ProcessExecuter.ExecuteProcess(psi);
 
-			string processResult = await ProcessExecuter.ExecuteProcess(psi);
+            dataModel.RawDumpBadging = processResult;
 
-			string[] arrayStr = Regex.Split(processResult, "\r\n");
+            DesktopCMDAAPTUtil.ReadBadging(dataModel, dataModel.RawDumpBadging);
+        }
 
-			var listStr = arrayStr.ToList();
+        private async Task Decode_LargeIcon()
+        {
+            ProcessStartInfo psi = new ProcessStartInfo()
+            {
+                FileName = pathProvider.GetAAPTPath(),
 
-			 _iconName = listStr.Where(s=>s.Contains("android:icon")).FirstOrDefault().Split('@')[1];
+                Arguments = $"dump xmltree \"{targetFilePath.OriginalString}\" \"AndroidManifest.xml\""
+            };
+            Debug.WriteLine("DefaultAPKDecoder.Decode_Badging(), path=" + targetFilePath.OriginalString);
 
-			//dataModel.RawDumpBadging = processResult;
-			//DesktopCMDAAPTUtil.ReadBadging(dataModel, dataModel.RawDumpBadging);
-		}
+            string processResult = await ProcessExecuter.ExecuteProcess(psi);
 
-		private async Task Decode_LargeIconName()
-		{
-			ProcessStartInfo psi = new ProcessStartInfo()
-			{
-				FileName = pathProvider.GetAAPTPath(),
-				Arguments = $"dump --values resources \"{targetFilePath.OriginalString}\""
-			};
+            string[] arrayStr = Regex.Split(processResult, "\r\n");
 
-			Debug.WriteLine("DefaultAPKDecoder.Decode_Badging(), path=" + targetFilePath.OriginalString);
+            var listStr = arrayStr.ToList();
 
-			var processResult = await ProcessExecuter.GetIconNameProcess(psi,iconKey: _iconName);
+            _iconName = listStr.Where(s => s.Contains("android:icon")).FirstOrDefault().Split('@')[1];
+        }
 
-			_iconPath = processResult;
+        private async Task Decode_LargeIconName()
+        {
+            ProcessStartInfo psi = new ProcessStartInfo()
+            {
+                FileName = pathProvider.GetAAPTPath(),
+                Arguments = $"dump --values resources \"{targetFilePath.OriginalString}\""
+            };
 
-			//string[] arrayStr = Regex.Split(processResult, "\r\n");
+            Debug.WriteLine("DefaultAPKDecoder.Decode_Badging(), path=" + targetFilePath.OriginalString);
 
-			//var listStr = arrayStr.ToList();
+            var processResult = await ProcessExecuter.GetIconNameProcess(psi, iconKey: _iconName);
 
-			//var iconList = new List<string>();
+            _iconPath = processResult;          
+        }
 
-   //         if (listStr.Any())
-   //         {
-			//	var configNames = Enum.GetNames(typeof(Configs)).Reverse();
+        private async Task Decode_Icon()
+        {
+            dataModel.MaxIconContent = await FileUtil.ZipExtractData(targetFilePath, dataModel.MaxIconZipEntry);
+        }
 
-			//	const char seperator = '\"';
+        private async Task Decode_IconPath()
+        {
+            dataModel.IconPath = await FileUtil.ZipExtractDataIconPath(targetFilePath, ExtractLargestIcon(_iconPath));
+        }
 
-			//	foreach (var itemStr in listStr)
-   //             {
-			//		if(Regex.IsMatch(itemStr, $"^\\s*resource\\s{_iconName}"))
-   //                 {
-			//			var index = listStr.IndexOf(itemStr);
+        private async Task Decode_Signature()
+        {
+            await DesktopJavaUtil.TestJavaExist();
 
-			//			 var resValue = listStr[index + 1];
+            if (!DesktopJavaUtil.javaExist)
+            {
+                dataModel.Signature = "Java is not found, can't read apk signature.";
+                return;
+            }
 
-			//			 var config = configNames.FirstOrDefault(c => itemStr.Contains(c));
+            ProcessStartInfo psiAPKSigner = new ProcessStartInfo
+            {
+                FileName = "java",
+                Arguments = "-jar " + pathProvider.GetAPKSignerPath() +
+                    " verify --verbose --print-certs" +
+                    " \"" + targetFilePath.OriginalString + "\"",
+            };
+            string processResult = await ProcessExecuter.ExecuteProcess(psiAPKSigner, false, false);
 
-			//			if (Regex.IsMatch(resValue, @"^\s*\((string\d*)\)*"))
-			//			{
-			//				// Resource value is icon url
-			//				var iconName = resValue.Split(seperator)
-			//					.FirstOrDefault(n => n.Contains("/"));
-			//				iconList.Add(iconName);
-			//				break;
-			//			}
-			//			if (Regex.IsMatch(resValue, @"^\s*\((reference)\)*"))
-			//			{
-			//				var iconID = resValue.Trim().Split(' ')[1];
-			//				iconList.Add(iconID);
-			//				break;
-			//			}
-			//		}
-   //             }
-   //         }
-			//_iconPath = iconList;
-			//dataModel.RawDumpBadging = processResult;
-			//DesktopCMDAAPTUtil.ReadBadging(dataModel, dataModel.RawDumpBadging);
-		}
+            dataModel.RawDumpSignature = processResult;
+            DesktopCMDAPKSignerUtil.ReadAPKSignature(dataModel, processResult);
+        }
 
-		private async Task Decode_Icon()
-		{
-			dataModel.MaxIconContent = await FileUtil.ZipExtractData(targetFilePath, dataModel.MaxIconZipEntry);
-		}
+        private void Decode_Hash()
+        {
+            FileUtil.CalculateSHA1(targetFilePath, dataModel);
+        }
 
-		private async Task Decode_IconPath()
-		{
-			dataModel.IconPath = await FileUtil.ZipExtractDataIconPath(targetFilePath, ExtractLargestIcon(_iconPath));
-		}
+        public PackageDataModel GetDataModel()
+        {
+            return dataModel;
+        }
 
-		private async Task Decode_Signature()
-		{
-			await DesktopJavaUtil.TestJavaExist();
+        private static string ExtractLargestIcon(Dictionary<string, string> iconList)
+        {
+            if (iconList.Count == 0)
+            {
+                return string.Empty;
+            }
+               
+            var icon = string.Empty;
 
-			if (!DesktopJavaUtil.javaExist)
-			{
-				dataModel.Signature = "Java is not found, can't read apk signature.";
-				return;
-			}
+            var configNames = Enum.GetNames(typeof(Configs)).ToList();
 
-			ProcessStartInfo psiAPKSigner = new ProcessStartInfo
-			{
-				FileName = "java",
-				Arguments = "-jar " + pathProvider.GetAPKSignerPath() +
-					" verify --verbose --print-certs" +
-					" \"" + targetFilePath.OriginalString + "\"",
-			};
-			string processResult = await ProcessExecuter.ExecuteProcess(psiAPKSigner, false, false);
+            configNames.Sort(new ConfigComparer());
 
-			dataModel.RawDumpSignature = processResult;
-			DesktopCMDAPKSignerUtil.ReadAPKSignature(dataModel, processResult);
-		}
+            foreach (string cfg in configNames)
+            {
+                if (iconList.TryGetValue(cfg, out icon))
+                {
+                    if (icon.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    break;
+                }
+            }
 
-		private void Decode_Hash()
-		{
-			FileUtil.CalculateSHA1(targetFilePath, dataModel);
-		}
+            return icon ?? string.Empty;
+        }
 
-		public PackageDataModel GetDataModel()
-		{
-			return dataModel;
-		}
-
-		private static string ExtractLargestIcon(Dictionary<string, string> iconList)
-		{
-			if (iconList.Count == 0)
-				return string.Empty;
-
-			var icon = string.Empty;
-
-			var configNames = Enum.GetNames(typeof(Configs)).ToList();
-
-			configNames.Sort(new ConfigComparer());
-
-			foreach (string cfg in configNames)
-			{
-				// Get the largest icon image, skip markup file (xml)
-				if (iconList.TryGetValue(cfg, out icon))
-				{
-					if (icon.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
-						continue;
-					break;  // Largest icon here :)
-				}
-			}
-
-			return icon ?? string.Empty;
-		}
-
-		/// <summary>
-		/// DPI config comparer, ordered by desc (largest first)
-		/// </summary>
-		private class ConfigComparer : IComparer<string>
-		{
-			public int Compare(string x, string y)
-			{
-				Enum.TryParse<Configs>(x, out Configs ex);
-				Enum.TryParse<Configs>(y, out Configs ey);
-				return ex > ey ? -1 : 1;
-			}
-		}
-	}
+        private class ConfigComparer : IComparer<string>
+        {
+            public int Compare(string x, string y)
+            {
+                Enum.TryParse<Configs>(x, out Configs ex);
+                Enum.TryParse<Configs>(y, out Configs ey);
+                return ex > ey ? -1 : 1;
+            }
+        }
+    }
 }

@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using CommunityToolkit.Mvvm.DependencyInjection;
-
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WsaPartner.Activation;
 using WsaPartner.Contracts.Services;
 using WsaPartner.Views;
@@ -60,7 +57,7 @@ namespace WsaPartner.Services
                     // will navigate to the first page
                     await HandleActivationAsync(activationArgs);
                     break;
-            }         
+            }
 
             // Ensure the current window is active
             App.MainWindow.Activate();

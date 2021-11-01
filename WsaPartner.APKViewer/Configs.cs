@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WsaPartner.APKViewer
+﻿namespace WsaPartner.APKViewer
 {
     internal enum Configs
     {

@@ -84,11 +84,9 @@ namespace WsaPartner.APKViewer
 
         public static Task<Dictionary<string, string>> GetIconNameProcess(ProcessStartInfo startInfo, bool useBothErrorAndNormal = false, bool useUTF8 = true, string iconKey = "")
         {
-            // string result = string.Empty;
 
             using (Process process = new Process())
             {
-                //CultureInfo.CurrentCulture.TextInfo.OEMCodePage
                 if (useUTF8)
                 {
                     startInfo.StandardOutputEncoding = Encoding.UTF8;
@@ -106,17 +104,9 @@ namespace WsaPartner.APKViewer
 
                 process.Start();
 
-                //process.BeginOutputReadLine();
-
-                //process.BeginErrorReadLine();
-
                 var outPutList = new Dictionary<string, string>();
 
                 var strList = new List<string>();
-
-                TaskCompletionSource<Dictionary<string, string>> tcs = new TaskCompletionSource<Dictionary<string, string>>();
-
-                var configNames = Enum.GetNames(typeof(Configs)).Reverse();
 
                 var terminated = false;
 
@@ -143,26 +133,7 @@ namespace WsaPartner.APKViewer
 
                 outPutList = SetIconList(indexes, strList);
 
-                //if (useBothErrorAndNormal)
-                //{
-                //    process.ErrorDataReceived +=
-                //        (sender, e) =>
-                //        {
-                //            if (e.Data != null)
-                //            {
-                //                //Console.WriteLine("ProcessExecuter.ExecuteProcess(): process.OutputDataReceived=\r\n" + e.Data);
-                //                outPutList.Add(e.Data);
-                //            }
-                //        };
-                //}
-
-                //process.Exited += (sender, e) => { tcs.SetResult(outPutList); };
-
                 Debug.WriteLine("ProcessExecuter.ExecuteProcess() process started.");
-
-                //await tcs.Task;
-
-                //await Task.Delay(50);
 
                 Debug.WriteLine("ProcessExecuter.ExecuteProcess() Final result=\r\n" + outPutList);
 
@@ -174,7 +145,7 @@ namespace WsaPartner.APKViewer
 
         public static bool CallbackMethod(string msg, int index, string iconKey)
         {
-            var matchedEntry = false;            
+            var matchedEntry = false;
 
             if (Regex.IsMatch(msg, $"^\\s*resource\\s{iconKey}"))
 
@@ -183,12 +154,12 @@ namespace WsaPartner.APKViewer
             if (!matchedEntry)
             {
                 if (msg.Contains("mipmap/"))
-                    matchedEntry = true;    // Begin mipmap entry
+                    matchedEntry = true;
             }
             else
             {
                 if (Regex.IsMatch(msg, $"^\\s*type\\s\\d*\\sconfigCount=\\d*\\sentryCount=\\d*$"))
-                {  // Next entry, terminate
+                {
                     matchedEntry = false;
                     return true;
                 }
@@ -205,42 +176,37 @@ namespace WsaPartner.APKViewer
                 return new Dictionary<string, string>();
 
             const char seperator = '\"';
-            // Prevent duplicate key when add to Dictionary,
-            // because comparison statement with 'hdpi' in config's values,
-            // reverse list and get first elem with LINQ
+
             var configNames = Enum.GetNames(typeof(Configs)).Reverse();
 
             var iconList = new Dictionary<string, string>();
 
-            Action<string, string> addIcon2Table = (cfg, iconName) => 
+            Action<string, string> addIcon2Table = (cfg, iconName) =>
                 {
-                if (!iconList.ContainsKey(cfg))
-                {
-                    iconList.Add(cfg,iconName);
-                }
-            };
+                    if (!iconList.ContainsKey(cfg))
+                    {
+                        iconList.Add(cfg, iconName);
+                    }
+                };
             string msg, resValue, config;
 
             foreach (int index in positions)
             {
                 for (int i = index; ; i--)
                 {
-                    // Go prev to find config
                     msg = messages[i];
 
                     if (Regex.IsMatch(msg, $"^\\s*type\\s\\d*\\sconfigCount=\\d*\\sentryCount=\\d*$"))  // Out of entry and not found
                         break;
                     if (Regex.IsMatch(msg, $"^\\s*config\\s\\(?({configEnum})(-v\\d*)?\\)?:"))
                     {
-                        // Match with predefined configs,
-                        // go next to get icon name
+
                         resValue = messages[index + 1];
 
                         config = configNames.FirstOrDefault(c => msg.Contains(c));
 
                         if (Regex.IsMatch(resValue, @"^\s*\((string\d*)\)*"))
                         {
-                            // Resource value is icon url
                             var iconName = resValue.Split(seperator)
                                 .FirstOrDefault(n => n.Contains("/"));
                             addIcon2Table(config, iconName);
