@@ -2,16 +2,18 @@
     x:Class="WsaPartner.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:WsaPartner.Helpers"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="MainPageObj"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <i:Interaction.Behaviors>
         <ic:EventTriggerBehavior EventName="Loaded">
-            <ic:InvokeCommandAction Command="{x:Bind ViewModel.LoadedCommand}" />
+            <ic:InvokeCommandAction Command="{x:Bind ViewModel.LoadedCommand}" CommandParameter="{x:Bind InAppNoty}" />
         </ic:EventTriggerBehavior>
     </i:Interaction.Behaviors>
     <Page.Resources>
@@ -86,6 +88,12 @@
                     Foreground="Red" />
             </StackPanel>
         </Grid>
+        <controls:InAppNotification
+            x:Name="InAppNoty"
+            AnimationDuration="00:00:00.1000000"
+            HorizontalOffset="0"
+            StackMode="Replace"
+            VerticalOffset="100" />
     </Grid>
 
 </Page>

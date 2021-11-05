@@ -12,12 +12,12 @@
 
     <NavigationView
         x:Name="navigationView"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
         ExpandedModeThresholdWidth="1280"
         Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}"
         IsBackButtonVisible="Visible"
         IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
         IsSettingsVisible="True"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
         PaneDisplayMode="Top"
         SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
         <NavigationView.MenuItems>
@@ -27,23 +27,17 @@
                 Or to use an IconElement instead of a Symbol see https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/projectTypes/navigationpane.md
                 Edit String/en-US/Resources.resw: Add a menu item title for each page
             -->
-            <NavigationViewItem
-                x:Uid="Shell_Home"
-                helpers:NavHelper.NavigateTo="WsaPartner.ViewModels.MainViewModel">
+            <NavigationViewItem x:Uid="Shell_Home" helpers:NavHelper.NavigateTo="WsaPartner.ViewModels.MainViewModel">
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons" Glyph="&#xE10F;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem
-                x:Uid="Shell_Install"
-                helpers:NavHelper.NavigateTo="WsaPartner.ViewModels.InstallViewModel">
+            <NavigationViewItem x:Uid="Shell_Install" helpers:NavHelper.NavigateTo="WsaPartner.ViewModels.InstallViewModel">
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons" Glyph="&#xF8AA;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem
-                x:Uid="Shell_AppList"
-                helpers:NavHelper.NavigateTo="WsaPartner.ViewModels.AppsViewModel">
+            <NavigationViewItem x:Uid="Shell_AppList" helpers:NavHelper.NavigateTo="WsaPartner.ViewModels.AppsViewModel">
                 <NavigationViewItem.Icon>
                     <FontIcon FontFamily="/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons" Glyph="&#xE8F1;" />
                 </NavigationViewItem.Icon>
@@ -52,9 +46,7 @@
         <NavigationView.HeaderTemplate>
             <DataTemplate>
                 <Grid>
-                    <TextBlock
-                        Style="{ThemeResource TitleTextBlockStyle}"
-                        Text="{Binding}" />
+                    <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{Binding}" />
                 </Grid>
             </DataTemplate>
         </NavigationView.HeaderTemplate>
@@ -63,9 +55,7 @@
                 <behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
                     <DataTemplate>
                         <Grid>
-                            <TextBlock
-                                Style="{ThemeResource TitleTextBlockStyle}"
-                                Text="{Binding}" />
+                            <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{Binding}" />
                         </Grid>
                     </DataTemplate>
                 </behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>

@@ -1,10 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI.UI.Controls;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using SharpAdbClient;
 using System;
 using System.Net;
 using System.Windows.Input;
 using WsaPartner.Contracts.Services;
+using WsaPartner.Views;
 
 namespace WsaPartner.ViewModels
 {
@@ -46,10 +50,16 @@ namespace WsaPartner.ViewModels
             set { SetProperty(ref _isConnected, value); }
         }
 
-        public ICommand LoadedCommand => _loadedCommand ?? (_loadedCommand = new RelayCommand(OnLoaded));
+        public ICommand LoadedCommand => _loadedCommand ?? (_loadedCommand = new RelayCommand<object>(OnLoaded));
 
-        private void OnLoaded()
+        private void OnLoaded(object obj)
         {
+            var inAppNoty = obj as InAppNotification;
+
+            //var content =  App.MainWindow.Content as ShellPage;
+            //inAppNoty.XamlRoot = App.MainWindow.Content.XamlRoot;
+
+            //inAppNoty.Show();
 
             try
             {
